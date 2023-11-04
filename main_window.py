@@ -1,5 +1,6 @@
 import sys
 from PySide6 import QtWidgets
+from lab_3_4 import data_returner
 
 class MyWindow(QtWidgets.QWidget):
     def __init__(self):
@@ -8,6 +9,7 @@ class MyWindow(QtWidgets.QWidget):
 
     def init_ui(self):
         layout = QtWidgets.QVBoxLayout()
+
         self.button_open_folder = QtWidgets.QPushButton('Open Folder Dialog')
         self.button_open_folder.clicked.connect(self.open_folder_dialog)
 
@@ -15,9 +17,19 @@ class MyWindow(QtWidgets.QWidget):
         self.button_create_annotation.clicked.connect(self.create_annotation_file)
 
         self.label = QtWidgets.QLabel()
+
+        #добавляем поле ввода даты и кнопку "Get Data"
+        self.date_input = QtWidgets.QDateEdit()
+        self.date_input.setDisplayFormat("dd.MM.yyyy")
+        self.button_get_data = QtWidgets.QPushButton('Get Data')
+        self.button_get_data.clicked.connect(self.get_data_for_date)
+
         layout.addWidget(self.button_open_folder)
         layout.addWidget(self.button_create_annotation)
         layout.addWidget(self.label)
+        layout.addWidget(self.date_input)
+        layout.addWidget(self.button_get_data)
+
         self.setLayout(layout)
 
     def open_folder_dialog(self):
@@ -32,7 +44,12 @@ class MyWindow(QtWidgets.QWidget):
             if file_path:
                 self.label.setText(f'Annotation File Created: {file_path}')
         else:
-            self.label.setText('Please select a folder first.')
+            self.label.setText('Please select a folder first')
+
+    def get_data_for_date(self):
+        selected_date = self.date_input.date().toString("dd.MM.yyyy")
+        collected_data = data_returner(selected_date)
+        self.label.setText(f'Data for Date {selected_date}: {collected_data}')
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
