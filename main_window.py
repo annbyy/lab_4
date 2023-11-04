@@ -8,10 +8,15 @@ class MyWindow(QtWidgets.QWidget):
 
     def init_ui(self):
         layout = QtWidgets.QVBoxLayout()
-        self.button = QtWidgets.QPushButton('Open Folder Dialog')
-        self.button.clicked.connect(self.open_folder_dialog)
+        self.button_open_folder = QtWidgets.QPushButton('Open Folder Dialog')
+        self.button_open_folder.clicked.connect(self.open_folder_dialog)
+
+        self.button_create_annotation = QtWidgets.QPushButton('Create Annotation File')
+        self.button_create_annotation.clicked.connect(self.create_annotation_file)
+
         self.label = QtWidgets.QLabel()
-        layout.addWidget(self.button)
+        layout.addWidget(self.button_open_folder)
+        layout.addWidget(self.button_create_annotation)
         layout.addWidget(self.label)
         self.setLayout(layout)
 
@@ -19,9 +24,18 @@ class MyWindow(QtWidgets.QWidget):
         folderpath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select Folder')
         if folderpath:
             self.label.setText(f'Selected Folder: {folderpath}')
+            self.selected_folder = folderpath
+
+    def create_annotation_file(self):
+        if hasattr(self, 'selected_folder'):
+            file_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'Save Annotation File', self.selected_folder)
+            if file_path:
+                self.label.setText(f'Annotation File Created: {file_path}')
+        else:
+            self.label.setText('Please select a folder first.')
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = MyWindow()
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
