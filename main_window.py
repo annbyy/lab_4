@@ -1,5 +1,6 @@
 import sys
 from PySide6 import QtWidgets
+from PySide6.QtCore import QFile, QTextStream
 from lab_3_4 import data_returner
 
 class MyWindow(QtWidgets.QWidget):
@@ -41,8 +42,18 @@ class MyWindow(QtWidgets.QWidget):
     def create_annotation_file(self):
         if hasattr(self, 'selected_folder'):
             file_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'Save Annotation File', self.selected_folder)
-            if file_path:
-                self.label.setText(f'Annotation File Created: {file_path}')
+            print(f'File Path: {file_path}')
+        if file_path:
+            self.label.setText(f'Annotation File Created: {file_path}')
+
+            # Теперь создайте файл и напишите в него что-то
+            file = QFile(file_path)
+            if file.open(QFile.WriteOnly | QFile.Text):
+                stream = QTextStream(file)
+                stream << "This is your annotation content."
+                file.close()
+            else:
+                self.label.setText(f'Failed to create annotation file at: {file_path}')
         else:
             self.label.setText('Please select a folder first')
 
